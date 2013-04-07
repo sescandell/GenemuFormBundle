@@ -30,6 +30,7 @@ class UploadController extends ContainerAware
         $folder = $this->container->getParameter('genemu.form.file.folder');
         $uploadDir = $this->container->getParameter('genemu.form.file.upload_dir');
         $name = uniqid() . '.' . $handle->guessExtension();
+        $originalName = $handle->getClientOriginalName();
 
         $json = array();
         if ($handle = $handle->move($uploadDir, $name)) {
@@ -74,7 +75,7 @@ class UploadController extends ContainerAware
                 ));
             }
 
-            $json['file'] = $folder . '/' . $handle->getFilename() . '?' . time();
+            $json['file'] = $folder . '/' . $handle->getFilename() . '?t=' . time() . '&originalName=' . $originalName;
         } else {
             $json['result'] = '0';
         }

@@ -51,16 +51,22 @@ class FileToValueTransformer implements DataTransformerInterface
             $datas = is_scalar($datas) ? explode(',', $datas) : $datas;
             $value = array();
 
-            foreach ($datas as $data) {
+            foreach ($datas as $originalName => $data) {
+                if (is_array($data)) {
+                    $data = $data['file'];
+                }
                 if (!$data instanceof File) {
                     $data = new File($this->rootDir . '/' . $this->stripQueryString($data));
                 }
 
-                $value[] = $this->folder . '/' . $data->getFilename();
+                $value[] = $this->folder . '/' . $data->getFilename().'?originalName='.$originalName;
             }
 
             $value = implode(',', $value);
         } else {
+            if (is_array($datas)) {
+                $datas = $datas['file'];
+            }
             if (!$datas instanceof File) {
                 $datas = new File($this->rootDir . '/' . $this->stripQueryString($datas));
             }
