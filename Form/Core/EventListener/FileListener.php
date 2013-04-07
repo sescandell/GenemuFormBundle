@@ -58,12 +58,12 @@ class FileListener implements EventSubscriberInterface
 
             foreach ($paths as $path) {
                 if ($handle = $this->getHandleToPath($path)) {
-                    $return[] = $handle;
+                    $return[$this->getOriginalName($path)] = array('rootDir' => $this->rootDir . '/', 'file' => $handle);
                 }
             }
         } else {
             if ($handle = $this->getHandleToPath($data)) {
-                $return = $handle;
+                $return = array('rootDir' => $this->rootDir . '/', 'file' => $handle);
             }
         }
 
@@ -108,6 +108,26 @@ class FileListener implements EventSubscriberInterface
         }
 
         return $file;
+    }
+
+    /**
+     * Retrieve client original name file from path
+     *
+     * @param string $path
+     * @return string
+     */
+    private function getOriginalName($path)
+    {
+        if (false !== ($pos = strpos($path, '?'))) {
+            $path = substr($path, $pos + 1);
+        }
+
+        parse_str($path, $output);
+        if (array_key_exists('originalName', $output)) {
+            return $output['originalName'];
+        }
+
+        return uniqid();
     }
 
     /**
